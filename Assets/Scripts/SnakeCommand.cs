@@ -8,6 +8,8 @@ public class SnakeCommand : MonoBehaviour
     public float BodySpeed = 5;
     public float SteerSpeed = 100;
     public int Gap = 200;
+    public OnCollide oc;
+    int recScore = 0;
 
     public GameObject BodyPrefab;
 
@@ -21,10 +23,6 @@ public class SnakeCommand : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        GrowSnake();
-        GrowSnake();
-        GrowSnake();
-        GrowSnake();
     }
 
     // Update is called once per frame
@@ -34,6 +32,12 @@ public class SnakeCommand : MonoBehaviour
         Steer();
         snakePosition();
         bodyPartsGenerated();
+
+        if (oc.score > recScore)
+        {
+            GrowSnake();
+            recScore= oc.score;
+        }
     }
 
     private void bodyPartsGenerated()
@@ -46,6 +50,7 @@ public class SnakeCommand : MonoBehaviour
 
             // Move body towards the point along the snakes path
             Vector3 moveDirection = point - body.transform.position;
+
             body.transform.position += moveDirection * BodySpeed * Time.deltaTime;
 
             // Rotate body towards the point along the snakes path
@@ -61,8 +66,7 @@ public class SnakeCommand : MonoBehaviour
         PositionHistory.Insert(0, transform.position);
     }
 
-    private void Steer()
-    {
+    private void Steer() { 
         // Rẽ
         float steerDirection = Input.GetAxis("Horizontal"); // Returns value -1, 0, or 1
         transform.Rotate(Vector3.up * steerDirection * SteerSpeed * Time.deltaTime);
@@ -75,14 +79,10 @@ public class SnakeCommand : MonoBehaviour
     }
 
     //Mọc thân rắn
-    private void GrowSnake() 
+    public void GrowSnake() 
     {
         GameObject body = Instantiate(BodyPrefab);
         BodyParts.Add(body);
     }
 
-    //private void FixedUpdate()
-    //{
-   //     rb.AddForce
-    //}
 }
